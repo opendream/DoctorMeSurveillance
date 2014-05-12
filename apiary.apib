@@ -1,0 +1,495 @@
+FORMAT: 1A
+HOST: http://www.google.com
+
+# DoctorMe Surveillance
+Crowd-sourcing epidemic detection. Collect reports from people to detect the disease or epidemic early.
+
+# Group User
+User related API.
+
+## User [/users]
+User resource.
+
++ Parameters
+    + id (string) ... User ID.
+
+
++ Model (application/hal+json)
+
+    HAL+JSON representation of Gist Resource.
+
+    + Headers
+
+            Links: <http://api.doctormesurveillance.com/users/3>;rel="self"
+
+    + Body
+
+            {
+                "meta": {
+                    "status": 200
+                },
+                "response": {
+                    "_links": {
+                        "self": { "href": "/users/3" }
+                    },
+                    "id": "3",
+                    "email": "siriwat@opendream.co.th",
+                    "tel": "0841291342",
+                    "gender": "male",
+                    "birthYear": 1986,
+                    "address": {
+                        "subdistrict": "Samsen-Nok",
+                        "district": "Huay Kwang",
+                        "city": "Bangkok"
+                    },
+                    "location": {
+                        "latitude": 13.1135,
+                        "longitude": 105.0014
+                    },
+                    "createdAt": "2014-05-02T19:00:00.000Z"
+                }
+            }
+
+### Create new user [POST]
+Create new user or you can called it "Registration". Return User object with additional fields:
+
+    - accessToken (string) ... Use for later request to all other APIs.
+
++ Parameters
+    + email (string, `siriwat@opendream.co.th`) ... E-mail for registration.
+    + password (string) ... Password.
+    + tel (string, `0841291342`) ... Telephone number. Valid with country prefix or dash.
+    + gender (string, `male`) ... Specify user gender. Valid only *male*, *female*.
+    + birthYear (number, `1986`) ... User's birth year. Must use C.E.
+    + address (json) ... Contains address fields: subdistrict, district, city.
+    + location (json) ... Current GPS location.
+
++ Request (application/json)
+
+        {
+            "email": "siriwat@opendream.co.th",
+            "password": "1z2x3c4v",
+            "tel": "0841291342",
+            "gender": "male",
+            "birthYear": 1986,
+            "address": {
+                "subdistrict": "Samsen-Nok",
+                "district": "Huay Kwang",
+                "city": "Bangkok"
+            },
+            "location": {
+                "latitude": 13.1135,
+                "longitude": 105.0014
+            }
+        }
+
++ Response 200 (application/hal+json)
+
+        {
+            "meta": {
+                "status": 200
+            },
+            "response": {
+                "_links": {
+                    "self": { "href": "/users/3" }
+                },
+                "id": "3",
+                "email": "siriwat@opendream.co.th",
+                "tel": "0841291342",
+                "gender": "male",
+                "birthYear": 1986,
+                "address": {
+                    "subdistrict": "Samsen-Nok",
+                    "district": "Huay Kwang",
+                    "city": "Bangkok"
+                },
+                "location": {
+                    "latitude": 13.1135,
+                    "longitude": 105.0014
+                },
+                "accessToken": "CAACEdEose0cBAARMdeXJe0AjxDbs6039b9mb5kPqwSxTjdZBUOa4ZAlgW1IwEhGXhduR1abOeOj7S9mp2uXBHbkJRJCSzYeMtXQPALM66ahlnh3ZB4U8hCCDbPR4rC9GeiGsYyjfUUUUvPZBkgHJeoVlNUpLnEgzEqOuvD0ol8hn5zQVBojFMxDLt3HeuAbBdOtEggwMEQZDZD",
+                "createdAt": "2014-05-02T19:00:00.000Z"
+            }
+        }
+
++ Response 400 (application/json)
+
+        {
+            "meta": {
+                "status": 400,
+                "errorType": "Bad Request",
+                "errorMessage": "Invalid parameters : E-mail field is required.",
+                "developerMessage": "E-mail field is required",
+                "invalidFields": [
+                    "email": "E-mail field is required",
+                    "password": "Password field is required"
+                ]
+            }
+        }
+
++ Response 409 (application/json)
+
+        {
+            "meta": {
+                "status": 409,
+                "errorType": "Conflict",
+                "errorMessage": "This e-mail is already registered, please login or try another e-mail",
+                "developerMessage": "This e-mail is already taken."
+            }
+        }
+
+## History [/users/{id}/history]
+List of user reports. Show reports by most latest date.
+
++ Parameters
+    + id (string) ... User ID.
+    + offset (number, optional) ... Offset. Default to `0`
+    + limit (number, optional) ... Limit. Default to `10`
+
+### Get user history [GET]
+Get user illness history.
+
++ Response 200 (application/hal+json)
+
+        {
+            "meta": {
+                "status": 200
+            },
+            "response": {
+                "_links": {
+                    "self": { "href": "/users/3/history" },
+                    "user": { "href": "/users/3" }
+                },
+                "reports": {
+                    "count": 20,
+                    "items": [
+                        {
+                            "_links": {
+                                "self": { "href": "/reports/2" },
+                            },
+                            "id": "2",
+                            "symptoms": [],
+                            "animalContact": false,
+                            "startedAt": "2014-04-01T10:00:00.000Z",
+                            "location": {
+                                "latitude": 13.1135,
+                                "longitude": 105.0014
+                            },
+                            "userId": "3",
+                            "createdAt": "2014-05-10T19:00:00.000Z"
+                        },
+                        {
+                            "_links": {
+                                "self": { "href": "/reports/1" },
+                            },
+                            "symptoms": [
+                                {
+                                    "_links": {
+                                        "self": { "href": "/symptoms/1" },
+                                    },
+                                    "id": "1",
+                                    "name": "Fever"
+                                }
+                            ],
+                            "id": "1",
+                            "animalContact": true,
+                            "startedAt": "2014-03-01T10:00:00.000Z",
+                            "location": {
+                                "latitude": 13.1135,
+                                "longitude": 105.0014
+                            },
+                            "moreInfo": "Symptoms of H1N1 swine flu are like regular flu symptoms and include fever, cough, sore throat, runny nose, body aches, headache, chills, and fatigue. Many people with swine flu have had diarrhea and vomiting.",
+                            "userId": "3",
+                            "createdAt": "2014-05-02T19:00:00.000Z"
+                        }
+                    ]
+                }
+            }
+        }
+
+## Login [/login]
+Authentication process.
+
+### Login [POST]
+Login to use the system. Force using HTTPS (SSL). Return User object with additional fields:
+
+    - accessToken (string) ... Use for later request to all other APIs.
+
++ Parameters
+    + email (string, `siriwat@opendream.co.th`) ... E-mail that already registered.
+    + password (string) ... Password.
+
++ Request (application/json)
+
+        {
+            "email": "siriwat@opendream.in.th",
+            "password": "1z2x3c4v"
+        }
+
++ Response 200 (application/hal+json)
+
+        {
+            "meta": {
+                "status": 200
+            },
+            "response": {
+                "_links": {
+                    "self": { "href": "/users/3" }
+                },
+                "id": "3",
+                "email": "siriwat@opendream.co.th",
+                "tel": "0841291342",
+                "gender": "male",
+                "birthYear": 1986,
+                "address": {
+                    "subdistrict": "Samsen-Nok",
+                    "district": "Huay Kwang",
+                    "city": "Bangkok"
+                },
+                "location": {
+                    "latitude": 13.1135,
+                    "longitude": 105.0014
+                },
+                "accessToken": "CAACEdEose0cBAARMdeXJe0AjxDbs6039b9mb5kPqwSxTjdZBUOa4ZAlgW1IwEhGXhduR1abOeOj7S9mp2uXBHbkJRJCSzYeMtXQPALM66ahlnh3ZB4U8hCCDbPR4rC9GeiGsYyjfUUUUvPZBkgHJeoVlNUpLnEgzEqOuvD0ol8hn5zQVBojFMxDLt3HeuAbBdOtEggwMEQZDZD",
+                "createdAt": "2014-05-02T19:00:00.000Z"
+            }
+        }
+
+
+# Group Report
+Illness (or just fine) report from users.
+
+## Report [/reports]
+
++ Model (application/hal+json)
+
+    + Headers
+
+            Links: <http://api.doctormesurveillance.com/reports/1a2b>;rel="self", <http://api.doctormesurveillance.com/users/3>;rel="user"
+
+    + Body
+
+            {
+                "meta": {
+                    "status": 200
+                },
+                "response": {
+                    "_links": {
+                        "self": { "href": "/reports/1" },
+                        "user": { "href": "/users/3" }
+                    },
+                    "symptoms": [
+                        {
+                            "_links": {
+                                "self": { "href": "/symptoms/1" },
+                            },
+                            "id": "1",
+                            "name": "Fever"
+                        }
+                    ],
+                    "id": "1",
+                    "animalContact": true,
+                    "startedAt": "2014-03-01T10:00:00.000Z",
+                    "location": {
+                        "latitude": 13.1135,
+                        "longitude": 105.0014
+                    },
+                    "moreInfo": "Symptoms of H1N1 swine flu are like regular flu symptoms and include fever, cough, sore throat, runny nose, body aches, headache, chills, and fatigue. Many people with swine flu have had diarrhea and vomiting.",
+                    "userId": "3",
+                    "createdAt": "2014-05-02T19:00:00.000Z"
+                }
+            }
+
+### GET /reports/{id}
+
++ Parameters
+    + id (string) ... Report ID.
+
++ Response 200 (application/hal+json)
+
+    [Report][]
+
+### POST /reports
+
++ Parameters
+    + symptoms (array) ... List of symptoms ID. If no symptoms, send empty list or nothing.
+    + animalContact (required, boolean) ... Whether if contact animal recently.
+    + startedAt (required, datetime) ... When the illness happened.
+    + location (required, json) ... Get from GPS location data when user report.
+    + moreInfo (string) ... More details about the illness.
+
++ Request (application/json)
+
+        {
+            "symptoms": ["1", "2"],
+            "animalContact": true,
+            "startedAt": "2014-03-01T10:00:00.000Z",
+            "location": {
+                "latitude": 13.1135,
+                "longitude": 105.0014
+            },
+            "moreInfo": "Symptoms of H1N1 swine flu are like regular flu symptoms and include fever, cough, sore throat, runny nose, body aches, headache, chills, and fatigue. Many people with swine flu have had diarrhea and vomiting.",
+        }
+
++ Response 200 (application/hal+json)
+
+    [Report][]
+
++ Response 400 (application/json)
+
+        {
+            "meta": {
+                "status": 400,
+                "errorType": "Bad Request",
+                "errorMessage": "Please tell us did you contact with animal before?",
+                "developerMessage": "animalContact field is required",
+                "invalidFields": [
+                    "animalContact": "animalContact field is required",
+                    "location": "location field is required"
+                ]
+            }
+        }
+
+# Group Symptom
+
+## Symptom [/symptoms{?language}]
+Symptoms related API.
+
+### Get symptoms list [GET]
+
++ Parameters
+    + language (optional, string) ... Language of symptom names to return.
+
++ Response 200 (application/hal+json)
+
+    + Body
+
+            {
+                "meta": {
+                    "status": 200
+                },
+                "response": {
+                    "_links": {
+                        "self": { "href": "/symptoms" }
+                    },
+                    "symptoms": [
+                        "count": 3,
+                        "items": [
+                            {
+                                "id": "1",
+                                "name": "Trauma"
+                            },
+                            {
+                                "id": "2",
+                                "name": "Headache"
+                            },
+                            {
+                                "id": "3",
+                                "name": "Diarrhea"
+                            }
+                        ]
+                    ]
+                }
+            }
+
+# Group Dashboard
+
+## Dashboard [/dashboard]
+
+### Get dashboard data [GET]
+Get all data ready to show on dashboard. These contains:
+
+    - Reports by city.
+    - ILI statistics.
+    - Number of reporters.
+    - BoE ILI data.
+    - DortorME ILI data.
+    - List of symptoms order by most report.
+
++ Parameters
+    + city (string, `Bangkok`) ... Specify city to get data of.
+    + startDate (string, optional) ... Start date. If startDate and endDate isn't provided. Use current week as default period.
+    + endDate (string, optional) ... End date. If startDate is provided but endDate is empty. Will use default period.
+
++ Response 200 (application/hal+json)
+
+        {
+            "meta": {
+                "status": 200
+            },
+            "response": {
+                "reports": {
+                    "count": 305,
+                    "items": [
+                        {
+                            "_links": {
+                                "self": { "href": "/reports/1" }
+                            },
+                            "id": "1",
+                            "location": {
+                                "latitude": 13.1135,
+                                "longitude": 105.0014
+                            },
+                            "symptoms": {
+                                "count": 2,
+                                "items": [
+                                    {
+                                        "id": "1",
+                                        "name": "Trauma"
+                                    },
+                                    {
+                                        "id": "2",
+                                        "name": "Headache"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "_links": {
+                                "self": { "href": "/reports/2" }
+                            },
+                            "id": "1",
+                            "location": {
+                                "latitude": 13.1134,
+                                "longitude": 105.0015
+                            },
+                            "symptoms": {
+                                "count": 0,
+                                "items": []
+                            }
+                        },
+                    ]
+                },
+                "ILI": {
+                    "thisWeek": 3.0,
+                    "lastWeek": 3.7,
+                    "delta": -0.7
+                },
+                "numberOfReporter": 124,
+                "numberOfReports": 362,
+                "graphs": {
+                    "BOE": [
+                        0.0, 0.0, 0.0, 0.3, 0.5, 0.8, 1.6, 3.2, 6.4, 7.2, 7.8, 7.85, 7.8,
+                        7.2, 6.4, 3.2, 1.6, 0.8, 0.5, 0.3, 0.2, 0.0, 0.0
+                    ],
+                    "DTM": [
+                        0.0, 0.3, 0.5, 0.8, 1.6, 3.2, 6.4, 7.2, 7.8, 7.85, 7.8, 7.2, 6.4,
+                        3.2, 1.6, 0.8, 0.5, 0.3, 0.2, 0.0, 0.0, 0.0, 0.0
+                    ]
+                },
+                "topSymptoms": [
+                    {
+                        "id": "2",
+                        "name": "Headache",
+                        "percentOfReports": 7.25,
+                        "numbersOfReports": 9
+                    },
+                    {
+                        "id": "1",
+                        "name": "Trauma",
+                        "percentOfReports": 4.03,
+                        "numbersOfReports": 5
+                    }
+                ]
+            }
+        }
