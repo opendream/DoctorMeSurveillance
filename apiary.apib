@@ -1,7 +1,7 @@
 FORMAT: 1A
 HOST: http://www.google.com
 
-# DoctorMe Surveillance
+# SickSense
 Crowd-sourcing epidemic detection. Collect reports from people to detect the disease or epidemic early.
 
 # Group User
@@ -138,7 +138,7 @@ Create new user or you can called it "Registration". Return User object with add
             }
         }
 
-## History [/users/{id}/history]
+## Report History [/users/{id}/reports]
 List of user reports. Show reports by most latest date.
 
 + Parameters
@@ -312,10 +312,11 @@ Illness (or just fine) report from users.
 ### POST /reports
 
 + Parameters
-    + symptoms (array) ... List of symptoms ID. If no symptoms, send empty list or nothing.
-    + animalContact (required, boolean) ... Whether if contact animal recently.
-    + startedAt (required, datetime) ... When the illness happened.
-    + location (required, json) ... Get from GPS location data when user report.
+    + isFine (boolean) ... If fine set this to `true`, else is `false`.
+    + symptoms (array) ... List of symptoms ID. Required if `isFine` is `true`.
+    + animalContact (boolean) ... Whether if contact animal recently.
+    + startedAt (datetime) ... When the illness happened.
+    + location (json) ... Get from GPS location data when user report.
     + moreInfo (string) ... More details about the illness.
 
 + Request (application/json)
@@ -352,13 +353,10 @@ Illness (or just fine) report from users.
 
 # Group Symptom
 
-## Symptom [/symptoms{?language}]
-Symptoms related API.
+## Symptom [/symptoms]
+Symptoms related API. REMARK: Symptom name localization is embed in UI, server keep only English name.
 
 ### Get symptoms list [GET]
-
-+ Parameters
-    + language (optional, string) ... Language of symptom names to return.
 
 + Response 200 (application/hal+json)
 
@@ -426,38 +424,18 @@ Get all data ready to show on dashboard. These contains:
                                 "self": { "href": "/reports/1" }
                             },
                             "id": "1",
-                            "location": {
-                                "latitude": 13.1135,
-                                "longitude": 105.0014
-                            },
-                            "symptoms": {
-                                "count": 2,
-                                "items": [
-                                    {
-                                        "id": "1",
-                                        "name": "Trauma"
-                                    },
-                                    {
-                                        "id": "2",
-                                        "name": "Headache"
-                                    }
-                                ]
-                            }
+                            "latitude": 13.1135,
+                            "longitude": 105.0014,
+                            "isFine": false
                         },
                         {
                             "_links": {
                                 "self": { "href": "/reports/2" }
                             },
-                            "id": "1",
-                            "location": {
-                                "latitude": 13.1134,
-                                "longitude": 105.0015
-                            },
-                            "symptoms": {
-                                "count": 0,
-                                "items": []
-                            }
-                        },
+                            "id": "2",
+                            "latitude": 13.1134,
+                            "longitude": 105.0015,
+                            "isFine": true
                     ]
                 },
                 "ILI": {
@@ -472,7 +450,7 @@ Get all data ready to show on dashboard. These contains:
                         0.0, 0.0, 0.0, 0.3, 0.5, 0.8, 1.6, 3.2, 6.4, 7.2, 7.8, 7.85, 7.8,
                         7.2, 6.4, 3.2, 1.6, 0.8, 0.5, 0.3, 0.2, 0.0, 0.0
                     ],
-                    "DTM": [
+                    "SickSense": [
                         0.0, 0.3, 0.5, 0.8, 1.6, 3.2, 6.4, 7.2, 7.8, 7.85, 7.8, 7.2, 6.4,
                         3.2, 1.6, 0.8, 0.5, 0.3, 0.2, 0.0, 0.0, 0.0, 0.0
                     ]
