@@ -138,11 +138,12 @@ Create new user or you can called it "Registration". Return User object with add
             }
         }
 
-## Report History [/users/{id}/reports]
+## Report History [/users/{id}/reports{?accessToken,offset,limit}]
 List of user reports. Show reports by most latest date.
 
 + Parameters
     + id (string) ... User ID.
+    + accessToken (string) ... Required. Must match with requesting `id`.
     + offset (number, optional) ... Offset. Default to `0`
     + limit (number, optional) ... Limit. Default to `10`
 
@@ -151,61 +152,64 @@ Get user illness history.
 
 + Response 200 (application/hal+json)
 
-        {
-            "meta": {
-                "status": 200
-            },
-            "response": {
-                "_links": {
-                    "self": { "href": "/users/3/history" },
-                    "user": { "href": "/users/3" }
+    + Headers
+
+            Links: <http://api.doctormesurveillance.com/users/3/reports>;rel="self"
+
+    + Body
+
+            {
+                "meta": {
+                    "status": 200
                 },
-                "reports": {
-                    "count": 20,
-                    "items": [
-                        {
-                            "_links": {
-                                "self": { "href": "/reports/2" },
+                "response": {
+                    "reports": {
+                        "count": 2,
+                        "items": [
+                            {
+                                "_links": {
+                                    "self": { "href": "/reports/1" }
+                                },
+                                "symptoms": [
+                                    {
+                                        "_links": {
+                                            "self": { "href": "/symptoms/1" },
+                                        },
+                                        "id": "1",
+                                        "name": "Fever"
+                                    }
+                                ],
+                                "id": "1",
+                                "isFine": false,
+                                "animalContact": true,
+                                "startedAt": "2014-03-01T10:00:00.000Z",
+                                "location": {
+                                    "latitude": 13.1135,
+                                    "longitude": 105.0014
+                                },
+                                "moreInfo": "Symptoms of H1N1 swine flu are like regular flu symptoms and include fever, cough, sore throat, runny nose, body aches, headache, chills, and fatigue. Many people with swine flu have had diarrhea and vomiting.",
+                                "createdAt": "2014-05-02T19:00:00.000Z"
                             },
-                            "id": "2",
-                            "symptoms": [],
-                            "animalContact": false,
-                            "startedAt": "2014-04-01T10:00:00.000Z",
-                            "location": {
-                                "latitude": 13.1135,
-                                "longitude": 105.0014
-                            },
-                            "userId": "3",
-                            "createdAt": "2014-05-10T19:00:00.000Z"
-                        },
-                        {
-                            "_links": {
-                                "self": { "href": "/reports/1" },
-                            },
-                            "symptoms": [
-                                {
-                                    "_links": {
-                                        "self": { "href": "/symptoms/1" },
-                                    },
-                                    "id": "1",
-                                    "name": "Fever"
-                                }
-                            ],
-                            "id": "1",
-                            "animalContact": true,
-                            "startedAt": "2014-03-01T10:00:00.000Z",
-                            "location": {
-                                "latitude": 13.1135,
-                                "longitude": 105.0014
-                            },
-                            "moreInfo": "Symptoms of H1N1 swine flu are like regular flu symptoms and include fever, cough, sore throat, runny nose, body aches, headache, chills, and fatigue. Many people with swine flu have had diarrhea and vomiting.",
-                            "userId": "3",
-                            "createdAt": "2014-05-02T19:00:00.000Z"
-                        }
-                    ]
+                            {
+                                "_links": {
+                                    "self": { "href": "/reports/2" }
+                                },
+                                "symptoms": [],
+                                "id": "1",
+                                "isFine": true,
+                                "animalContact": false,
+                                "startedAt": "2014-02-01T10:00:00.000Z",
+                                "location": {
+                                    "latitude": 13.1134,
+                                    "longitude": 105.0015
+                                },
+                                "moreInfo": "",
+                                "createdAt": "2014-05-02T20:00:00.000Z"
+                            }
+                        ]
+                    }
                 }
             }
-        }
 
 ## Login [/login]
 Authentication process.
@@ -265,7 +269,7 @@ Illness (or just fine) report from users.
 
     + Headers
 
-            Links: <http://api.doctormesurveillance.com/reports/1a2b>;rel="self", <http://api.doctormesurveillance.com/users/3>;rel="user"
+            Links: <http://api.doctormesurveillance.com/reports/1a2b>;rel="self"
 
     + Body
 
@@ -275,8 +279,7 @@ Illness (or just fine) report from users.
                 },
                 "response": {
                     "_links": {
-                        "self": { "href": "/reports/1" },
-                        "user": { "href": "/users/3" }
+                        "self": { "href": "/reports/1" }
                     },
                     "symptoms": [
                         {
@@ -288,6 +291,7 @@ Illness (or just fine) report from users.
                         }
                     ],
                     "id": "1",
+                    "isFine": false,
                     "animalContact": true,
                     "startedAt": "2014-03-01T10:00:00.000Z",
                     "location": {
@@ -295,23 +299,95 @@ Illness (or just fine) report from users.
                         "longitude": 105.0014
                     },
                     "moreInfo": "Symptoms of H1N1 swine flu are like regular flu symptoms and include fever, cough, sore throat, runny nose, body aches, headache, chills, and fatigue. Many people with swine flu have had diarrhea and vomiting.",
-                    "userId": "3",
                     "createdAt": "2014-05-02T19:00:00.000Z"
                 }
             }
+            
+### GET /reports{?offset,limit,sw,ne}
+Return list of reports determine by provided criterias (parameters).
 
-### GET /reports/{id}
++ Parameters
+    + offset (number, optional) ... Offset. Default to `0`
+    + limit (number, optional) ... Limit. Default to `10`
+    + sw (float, optional) ... Required if `ne` is provided. Boundary query. Latitude and longitude coordinates of the south-west boundary.
+    + ne (float, optional) ... Required if `sw` is provided. Boundary query. Latitude and longitude coordinates of the north-east boundary.
+    
++ Response 200 (application/hal+json)
+
+    + Headers
+
+            Links: <http://api.doctormesurveillance.com/reports>;rel="self"
+
+    + Body
+
+            {
+                "meta": {
+                    "status": 200
+                },
+                "response": {
+                    "reports": {
+                        "count": 2,
+                        "items": [
+                            {
+                                "_links": {
+                                    "self": { "href": "/reports/1" }
+                                },
+                                "symptoms": [
+                                    {
+                                        "_links": {
+                                            "self": { "href": "/symptoms/1" },
+                                        },
+                                        "id": "1",
+                                        "name": "Fever"
+                                    }
+                                ],
+                                "id": "1",
+                                "isFine": false,
+                                "animalContact": true,
+                                "startedAt": "2014-03-01T10:00:00.000Z",
+                                "location": {
+                                    "latitude": 13.1135,
+                                    "longitude": 105.0014
+                                },
+                                "moreInfo": "Symptoms of H1N1 swine flu are like regular flu symptoms and include fever, cough, sore throat, runny nose, body aches, headache, chills, and fatigue. Many people with swine flu have had diarrhea and vomiting.",
+                                "createdAt": "2014-05-02T19:00:00.000Z"
+                            },
+                            {
+                                "_links": {
+                                    "self": { "href": "/reports/2" }
+                                },
+                                "symptoms": [],
+                                "id": "1",
+                                "isFine": true,
+                                "animalContact": false,
+                                "startedAt": "2014-02-01T10:00:00.000Z",
+                                "location": {
+                                    "latitude": 13.1134,
+                                    "longitude": 105.0015
+                                },
+                                "moreInfo": "",
+                                "createdAt": "2014-05-02T20:00:00.000Z"
+                            }
+                        ]
+                    }
+                }
+            }
+    
+
+### GET /reports/{id}{?accessToken}
 
 + Parameters
     + id (string) ... Report ID.
+    + accessToken (string) ... Current user must match with report `id` or else will return `403 forbidden`
 
 + Response 200 (application/hal+json)
 
     [Report][]
 
-### POST /reports
+### POST /reports{?accessToken}
 
 + Parameters
+    + accessToken (string) ... Current user access token.
     + isFine (boolean) ... If fine set this to `true`, else is `false`.
     + symptoms (array) ... List of symptoms ID. Required if `isFine` is `true`.
     + animalContact (boolean) ... Whether if contact animal recently.
@@ -401,7 +477,7 @@ Get all data ready to show on dashboard. These contains:
     - ILI statistics.
     - Number of reporters.
     - BoE ILI data.
-    - DortorME ILI data.
+    - SickSense ILI data.
     - List of symptoms order by most report.
 
 + Parameters
